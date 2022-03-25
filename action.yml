@@ -1,0 +1,45 @@
+---
+# https://help.github.com/en/articles/metadata-syntax-for-github-actions
+name: 'upload-artifact-verify'
+description: "GitHub Action to upload an artifact and verify it is downloadable."
+author: 'cytopia'
+branding:
+  icon: 'code'
+  color: 'red'
+
+inputs:
+  name:
+    description: 'The filename of the uploaded file'
+    required: true
+  path:
+    description: 'The local file to upload'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+
+    - name: Create temporary directory
+      id: tmp-dir
+      shell: bash
+      run: |
+        DIRECTORY="$( mktemp -d )"
+        echo "::set-output name=path::${DIRECTORY}"
+
+    - name: Download artifact (for verification)
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ steps.tmp-dir.outputs.path }}
+
+    - name: Verify artifact
+      shell: bash
+      run: |
+        DIRECTORY="$( mktemp -d )"
+        echo "::set-output name=path::${DIRECTORY}"
