@@ -35,7 +35,7 @@ runs:
     - name: Download artifact (for verification)
       uses: actions/download-artifact@v3
       with:
-        name: ${{ input.name }}
+        name: ${{ inputs.name }}
         path: ${{ steps.tmp-dir.outputs.path }}
 
     - name: Verify artifact
