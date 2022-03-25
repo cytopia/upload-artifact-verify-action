@@ -43,7 +43,7 @@ jobs:
         id: file
         shell: bash
         run: |
-          PRE_RAND="$( ${RANDOM} | md5sum | head -c 20;  )"
+          PRE_RAND="$( ${RAND} | md5sum | head -c 20;  )"
           PRE_DATE="$( date '+%s' )"
           NAME="${PRE_RAND}-${PRE_DATE}.txt"
           echo "somedata" > "${NAME}"
@@ -51,7 +51,6 @@ jobs:
 
       - name: upload artifact
         uses: cytopia/upload-artifact-verify@v0.1.0
-        uses: ./
         with:
           name: ${{ steps.file.outputs.path }}
           path: ${{ steps.file.outputs.path }}
