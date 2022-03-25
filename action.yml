@@ -19,6 +19,9 @@ runs:
   using: "composite"
   steps:
 
+    # --------------------------------------------------------------------------------
+    # Try 1
+    # --------------------------------------------------------------------------------
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
@@ -26,20 +29,58 @@ runs:
         path: ${{ inputs.path }}
 
     - name: Create temporary directory
-      id: tmp-dir
+      id: tmp-dir-1
       shell: bash
       run: |
         DIRECTORY="$( mktemp -d )"
         echo "::set-output name=path::${DIRECTORY}"
 
     - name: Download artifact (for verification)
+      continue-on-error: true
+      id: download-1
       uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.name }}
-        path: ${{ steps.tmp-dir.outputs.path }}
+        path: ${{ steps.tmp-dir-1.outputs.path }}
 
     - name: Verify artifact
+      continue-on-error: true
+      id: verify-1
+      shell: bash
+      run: |
+        file "${{ steps.tmp-dir-1.outputs.path }}"
+
+    # --------------------------------------------------------------------------------
+    # Try 2
+    # --------------------------------------------------------------------------------
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+      if: ${{ steps.download-1.outcome == 'failure' || steps.verify-1.outcome == 'failure' }}
+
+    - name: Create temporary directory
+      id: tmp-dir-2
       shell: bash
       run: |
         DIRECTORY="$( mktemp -d )"
         echo "::set-output name=path::${DIRECTORY}"
+      if: ${{ steps.download-1.outcome == 'failure' || steps.verify-1.outcome == 'failure' }}
+
+    - name: Download artifact (for verification)
+      continue-on-error: true
+      id: download-01
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ steps.tmp-dir-2.outputs.path }}
+      if: ${{ steps.download-1.outcome == 'failure' || steps.verify-1.outcome == 'failure' }}
+
+    - name: Verify artifact
+      continue-on-error: true
+      id: verify-01
+      shell: bash
+      run: |
+        file "${{ steps.tmp-dir-2.outputs.path }}"
+      if: ${{ steps.download-1.outcome == 'failure' || steps.verify-1.outcome == 'failure' }}
