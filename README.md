@@ -50,7 +50,7 @@ jobs:
           echo "::set-output name=path::${NAME}"
 
       - name: upload artifact
-        uses: cytopia/upload-artifact-verify@v0.1.0
+        uses: cytopia/upload-artifact-verify-action@v0.1.0
         with:
           name: ${{ steps.file.outputs.path }}
           path: ${{ steps.file.outputs.path }}
