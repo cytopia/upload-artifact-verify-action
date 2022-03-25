@@ -46,27 +46,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create artifact
-        id: file
+      - name: Fail step
+        shell: bash
+        id: fail
+        continue-on-error: true
+        run: |
+          false
+
+      - name: Success step
         shell: bash
         run: |
-          PRE_RAND="$( ${RAND} | md5sum | head -c 20;  )"
-          PRE_DATE="$( date '+%s' )"
-          NAME="${PRE_RAND}-${PRE_DATE}.txt"
-          echo "somedata" > "${NAME}"
-          echo "::set-output name=path::${NAME}"
+          echo "outcome: ${{ steps.fail.outcome }}"
+          echo "outcome: ${{ steps.fail.conclusion }}"
+          #if: failure() && steps.id.outcome == 'failure'
 
-      - name: "[Artifact Save] Upload base"
-        uses: Wandalen/wretry.action@v1.0.11
-        with:
-          action: cytopia/upload-artifact-verify-action@v0.1.0
-          with: |
-            name: ${{ steps.file.outputs.path }}
-            path: ${{ steps.file.outputs.path }}
-          attempt_limit: 20
-          attempt_delay: 10000
-
-      - name: download  artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ steps.file.outputs.path }}
+      - name: Normal step
+        shell: bash
+        run: |
+          echo "true"
