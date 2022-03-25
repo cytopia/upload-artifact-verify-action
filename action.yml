@@ -1,3 +1,4 @@
+---
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
 name: 'upload-artifact-verify'
 description: "GitHub Action to upload an artifact and verify it is downloadable."
@@ -32,7 +33,7 @@ runs:
         echo "::set-output name=path::${DIRECTORY}"
 
     - name: Download artifact (for verification)
-      action: actions/download-artifact@v3
+      uses: actions/download-artifact@v3
       with:
         name: ${{ input.name }}
         path: ${{ steps.tmp-dir.outputs.path }}
