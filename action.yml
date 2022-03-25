@@ -21,8 +21,8 @@ runs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ input.name }}
-        path: ${{ input.path }}
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
 
     - name: Create temporary directory
       id: tmp-dir
