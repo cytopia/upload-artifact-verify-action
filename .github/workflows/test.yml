@@ -5,7 +5,7 @@ on:
 
 jobs:
   test01:
-    name: test
+    name: test normal
     runs-on: ubuntu-latest
     steps:
 
@@ -37,7 +37,7 @@ jobs:
 
 
   test02:
-    name: test
+    name: test with retry
     runs-on: ubuntu-latest
     steps:
 
@@ -62,7 +62,6 @@ jobs:
           action: ./
           with: |
             name: ${{ steps.file.outputs.path }}
-            path: ${{ steps.file.outputs.path }}
           attempt_limit: 20
           attempt_delay: 10000
 
