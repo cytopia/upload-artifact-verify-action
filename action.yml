@@ -19,27 +19,80 @@ runs:
   using: "composite"
   steps:
 
-    - name: Upload artifact
+    # ------------------------------------------------------------
+    # Upload Artifact (try 1)
+    # ------------------------------------------------------------
+
+    - name: "[try 1] Upload artifact"
+      id: upload-1
+      continue-on-error: true
       uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.name }}
         path: ${{ inputs.path }}
 
-    - name: Create temporary directory
-      id: tmp-dir
+    - name: "[try 1] Create temporary directory"
+      id: tmp-dir-1
       shell: bash
-      run: |
-        DIRECTORY="$( mktemp -d )"
-        echo "::set-output name=path::${DIRECTORY}"
+      run: echo "::set-output name=path::$( mktemp -d )"
+      if: ${{ steps.upload-1.outcome == 'success' }}
 
-    - name: Download artifact (for verification)
+    - name: "[try 1] Download artifact"
+      id: download-1
+      continue-on-error: true
       uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.name }}
-        path: ${{ steps.tmp-dir.outputs.path }}
+        path: ${{ steps.tmp-dir-1.outputs.path }}
+      if: ${{ steps.upload-1.outcome == 'success' }}
 
-    - name: Verify artifact
+
+    # ------------------------------------------------------------
+    # Upload Artifact (try 2)
+    # ------------------------------------------------------------
+
+    - name: "[try 2] Upload artifact"
+      id: upload-2
+      continue-on-error: true
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+      if: ${{ steps.upload-1.outcome == 'failure' || steps.download-1.outcome == 'failure' }}
+
+    - name: "[try 2] Create temporary directory"
+      id: tmp-dir-2
       shell: bash
-      run: |
-        DIRECTORY="$( mktemp -d )"
-        echo "::set-output name=path::${DIRECTORY}"
+      run: echo "::set-output name=path::$( mktemp -d )"
+      if: ${{ steps.upload-2.outcome == 'success' }}
+
+    - name: "[try 2] Download artifact"
+      id: download-2
+      continue-on-error: true
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ steps.tmp-dir-2.outputs.path }}
+      if: ${{ steps.upload-2.outcome == 'success' }}
+
+
+    # ------------------------------------------------------------
+    # Upload Artifact (final try)
+    # ------------------------------------------------------------
+
+    - name: "[final] Upload artifact"
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+
+    - name: "[final] Create temporary directory"
+      id: tmp-dir-x
+      shell: bash
+      run: echo "::set-output name=path::$( mktemp -d )"
+
+    - name: "[final] Download artifact"
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ steps.tmp-dir-x.outputs.path }}
