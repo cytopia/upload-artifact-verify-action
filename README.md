@@ -14,7 +14,7 @@ The following inputs can be used to alter the Docker tag name determination:
 
 | Input     | Required | Default | Description                                |
 |-----------|----------|----------|-------------------------------------------|
-| `name`    | Yes      | ``       | The filename of the uploaded file         |
+| `name`    | Yes      | ``       | The artifact name.                        |
 | `path`    | Yes      | ``       | The local file to upload.                 |
 
 
