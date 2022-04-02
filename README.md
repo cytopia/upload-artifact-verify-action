@@ -5,22 +5,27 @@
 [![](https://img.shields.io/badge/github-cytopia%2Fupload--artifact--verify--action-red.svg?logo=github)](https://github.com/cytopia/upload-artifact-verify-action "github.com/cytopia/upload-artifact-verify-action")
 [![test](https://github.com/cytopia/upload-artifact-verify-action/actions/workflows/test.yml/badge.svg)](https://github.com/cytopia/upload-artifact-verify-action/actions/workflows/test.yml)
 
-This action allows you to upload an artifact. It will then download it in the background to ensure the upload was successful.
+This action allows you to upload an artifact. It will then download it in the background to ensure the upload was successful. You can additionally issue pre and post commands.
 
 
 ## :arrow_forward: Inputs
 
 The following inputs can be used to alter the Docker tag name determination:
 
-| Input     | Required | Default | Description                                |
-|-----------|----------|----------|-------------------------------------------|
-| `name`    | Yes      | ``       | The artifact name.                        |
-| `path`    | Yes      | ``       | The local file to upload.                 |
+| Input          | Required | Default | Description                               |
+|----------------|----------|---------|-------------------------------------------|
+| `name`         | Yes      | ``      | The artifact name.                        |
+| `path`         | Yes      | ``      | The local file to upload.                 |
+| `pre_command`  | No       | ``      | A bash command to execute before uploading the artifact (e.g.: to create the artifact)            |
+| `post_command` | No       | ``      | A bash command to execute after downloading the artifact (e.g.: to verify it is the desired file) |
+
 
 
 ## :arrow_backward: Outputs
 
-None
+| Output          | Description |
+|-----------------|-------------|
+| `download_path` | The path to the downloaded file |
 
 
 ## :computer: Usage

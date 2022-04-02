@@ -30,13 +30,8 @@ jobs:
           name: ${{ steps.file.outputs.path }}
           path: ${{ steps.file.outputs.path }}
 
-      - name: download  artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ steps.file.outputs.path }}
 
-
-  test-retry:
+  test-pre-post-command:
     name: test
     runs-on: ubuntu-latest
     steps:
@@ -56,17 +51,11 @@ jobs:
           echo "somedata" > "${NAME}"
           echo "::set-output name=path::${NAME}"
 
-      - name: "[Artifact Save] Upload base"
-        uses: Wandalen/wretry.action@v1.0.12
-        with:
-          action: cytopia/upload-artifact-verify-action@v0.1.2
-          with: |
-            name: ${{ steps.file.outputs.path }}
-            path: ${{ steps.file.outputs.path }}
-          attempt_limit: 20
-          attempt_delay: 10000
-
-      - name: download  artifact
-        uses: actions/download-artifact@v2
+      - name: upload artifact
+        id: upload
+        uses: ./
         with:
           name: ${{ steps.file.outputs.path }}
+          path: ${{ steps.file.outputs.path }}
+          post_command: |
+            ls -lap ${{ steps.upload.outputs.download_path }}

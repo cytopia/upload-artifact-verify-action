@@ -1,7 +1,7 @@
 ---
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
 name: 'upload-artifact-verify'
-description: "GitHub Action to upload an artifact and verify it is downloadable."
+description: "GitHub Action to upload an artifact and verify it worked by downloading it again to a temporary directory."
 author: 'cytopia'
 branding:
   icon: 'code'
@@ -14,10 +14,31 @@ inputs:
   path:
     description: 'The local file to upload.'
     required: true
+  pre_command:
+    description: 'A bash command to execute before uploading the artifact (e.g.: to create the artifact)'
+    required: false
+    default: ''
+  post_command:
+    description: 'A bash command to execute after downloading the artifact (e.g.: to verify it is the desired file)'
+    required: false
+    default: ''
+
+outputs:
+  download_path:
+    description: 'The path to the downloaded file'
+    value: ${{ steps.tmp-dir.outputs.path }}
 
 runs:
   using: "composite"
   steps:
+
+    - name: Execute pre command
+      uses: cytopia/shell-command-retry-action@v0.1.3
+      with:
+        retries: 10
+        pause: 10
+        command: ${{ inputs.pre_command }}
+      if: ${{ inputs.pre_command != '' }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
@@ -37,3 +58,11 @@ runs:
       with:
         name: ${{ inputs.name }}
         path: ${{ steps.tmp-dir.outputs.path }}
+
+    - name: Execute post command
+      uses: cytopia/shell-command-retry-action@v0.1.3
+      with:
+        retries: 10
+        pause: 10
+        command: ${{ inputs.post_command }}
+      if: ${{ inputs.post_command != '' }}
