@@ -28,6 +28,7 @@ None
 
 ## :computer: Usage
 
+### Simple
 ```yaml
 on: [push]
 
@@ -53,10 +54,61 @@ jobs:
           echo "::set-output name=path::${NAME}"
 
       - name: upload artifact
-        uses: cytopia/upload-artifact-verify-action@v0.1.0
+        uses: cytopia/upload-artifact-verify-action@v0.1.3
         with:
           name: ${{ steps.file.outputs.path }}
           path: ${{ steps.file.outputs.path }}
+```
+
+### Complex with retry logic
+
+```yaml
+on: [push]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    name: Pull docker image
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # TRY-1
+      # export docker image to file
+      # upload file
+      # download file
+      # import downloaded file into docker
+      - name: upload docker image (try-1)
+        id: upload-1
+        uses: cytopia/upload-artifact-verify-action@v0.1.3
+        continue-on-error: true
+        with:
+          name: php-fpm-8.1-work
+          path: php-fpm-8.1-work
+          pre_command: |
+            docker save devilbox/php-fpm:8.1-work | gzip > php-fpm-8.1-work
+          post_command: |
+            docker load -i {{download_path}}
+
+      # TRY-2
+      # export docker image to file
+      # upload file
+      # download file
+      # import downloaded file into docker
+      - name: upload docker image (try-2)
+        id: upload-2
+        uses: cytopia/upload-artifact-verify-action@v0.1.3
+        with:
+          name: php-fpm-8.1-work
+          path: php-fpm-8.1-work
+          pre_command: |
+            docker save devilbox/php-fpm:8.1-work | gzip > php-fpm-8.1-work
+          post_command: |
+            docker load -i {{download_path}}
+        if: steps.upload-1.outcome == 'failure'
 ```
 
 
