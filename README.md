@@ -17,15 +17,13 @@ The following inputs can be used to alter the Docker tag name determination:
 | `name`         | Yes      | ``      | The artifact name.                        |
 | `path`         | Yes      | ``      | The local file to upload.                 |
 | `pre_command`  | No       | ``      | A bash command to execute before uploading the artifact (e.g.: to create the artifact)            |
-| `post_command` | No       | ``      | A bash command to execute after downloading the artifact (e.g.: to verify it is the desired file) |
+| `post_command` | No       | ``      | A bash command to execute after downloading the artifact (e.g.: to verify it is the desired file)<br/>The `{{download_path}}` placeholder is available to refer to the downloaded file. |
 
 
 
 ## :arrow_backward: Outputs
 
-| Output          | Description |
-|-----------------|-------------|
-| `download_path` | The path to the downloaded file |
+None
 
 
 ## :computer: Usage

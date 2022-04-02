@@ -23,11 +23,6 @@ inputs:
     required: false
     default: ''
 
-outputs:
-  download_path:
-    description: 'The path to the downloaded file'
-    value: ${{ steps.tmp-dir.outputs.path }}
-
 runs:
   using: "composite"
   steps:
@@ -59,10 +54,20 @@ runs:
         name: ${{ inputs.name }}
         path: ${{ steps.tmp-dir.outputs.path }}
 
+    - name: set placeholder
+      id: placeholder
+      shell: bash
+      run: |
+        COMMAND='${{ inputs.post_command }}'
+        REPLACE='${{ steps.tmp-dir.outputs.path }}'
+        COMMAND="${COMMAND//\{\{download_path\}\}/${REPLACE}}"
+        echo "::set-output name=command::${COMMAND}"
+      if: ${{ inputs.post_command != '' }}
+
     - name: Execute post command
       uses: cytopia/shell-command-retry-action@v0.1.3
       with:
         retries: 10
         pause: 10
-        command: ${{ inputs.post_command }}
+        command: ${{ steps.placeholder.outputs.command }}
       if: ${{ inputs.post_command != '' }}

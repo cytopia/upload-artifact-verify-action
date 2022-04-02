@@ -58,4 +58,4 @@ jobs:
           name: ${{ steps.file.outputs.path }}
           path: ${{ steps.file.outputs.path }}
           post_command: |
-            ls -lap ${{ steps.upload.outputs.download_path }}
+            ls -lap {{download_path}}
