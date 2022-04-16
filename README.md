@@ -1,7 +1,7 @@
 # Upload artifact verify action
 
 [![GitHub release](https://img.shields.io/github/release/cytopia/upload-artifact-verify-action.svg?logo=github)](https://github.com/cytopia/upload-artifact-verify-action/releases/latest)
-[![GitHub marketplace](https://img.shields.io/badge/marketplace-upload--artifact--verify--action-blue?logo=github)](https://github.com/marketplace/actions/upload-artifact-verify-action)
+[![GitHub marketplace](https://img.shields.io/badge/marketplace-upload--artifact--verify-blue?logo=github)](https://github.com/marketplace/actions/upload-artifact-verify)
 [![](https://img.shields.io/badge/github-cytopia%2Fupload--artifact--verify--action-red.svg?logo=github)](https://github.com/cytopia/upload-artifact-verify-action "github.com/cytopia/upload-artifact-verify-action")
 [![test](https://github.com/cytopia/upload-artifact-verify-action/actions/workflows/test.yml/badge.svg)](https://github.com/cytopia/upload-artifact-verify-action/actions/workflows/test.yml)
 
@@ -54,7 +54,7 @@ jobs:
           echo "::set-output name=path::${NAME}"
 
       - name: upload artifact
-        uses: cytopia/upload-artifact-verify-action@v0.1.3
+        uses: cytopia/upload-artifact-verify-action@v0.1.4
         with:
           name: ${{ steps.file.outputs.path }}
           path: ${{ steps.file.outputs.path }}
@@ -83,7 +83,7 @@ jobs:
       # import downloaded file into docker
       - name: upload docker image (try-1)
         id: upload-1
-        uses: cytopia/upload-artifact-verify-action@v0.1.3
+        uses: cytopia/upload-artifact-verify-action@v0.1.4
         continue-on-error: true
         with:
           name: php-fpm-8.1-work
@@ -100,7 +100,7 @@ jobs:
       # import downloaded file into docker
       - name: upload docker image (try-2)
         id: upload-2
-        uses: cytopia/upload-artifact-verify-action@v0.1.3
+        uses: cytopia/upload-artifact-verify-action@v0.1.4
         with:
           name: php-fpm-8.1-work
           path: php-fpm-8.1-work
@@ -129,15 +129,19 @@ updates:
 
 ## :octocat: [cytopia](https://github.com/cytopia) GitHub Actions
 
-| Name                         | Description |
-|------------------------------|-------------|
-| [docker-tag-action]          | Determines Docker tags based on git branch, commit or git tag |
-| [git-ref-matrix-action]      | Create stringified JSON list of git refs to be used as a build matrix |
-| [shell-command-retry-action] | Retries shell commands to avoid failing pipelines due to network issues |
+| Name                            | Description |
+|---------------------------------|-------------|
+| [docker-tag-action]             | Determines Docker tags based on git branch, commit or git tag |
+| [git-ref-matrix-action]         | Create stringified JSON list of git refs to be used as a build matrix |
+| [shell-command-retry-action]    | Retries shell commands to avoid failing pipelines due to network issues |
+| [upload-artifact-verify-action] | Upload artifact and verifies it by downloading it again |
+| [upload-artifact-retry-action]  | Retries `upload-artifact-verify-action` |
 
 [docker-tag-action]: https://github.com/cytopia/docker-tag-action
 [git-ref-matrix-action]: https://github.com/cytopia/git-ref-matrix-action
 [shell-command-retry-action]: https://github.com/cytopia/shell-command-retry-action
+[upload-artifact-verify-action]: https://github.com/cytopia/upload-artifact-verify-action
+[upload-artifact-retry-action]: https://github.com/cytopia/upload-artifact-retry-action
 
 
 ## :page_facing_up: License
