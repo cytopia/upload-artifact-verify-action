@@ -47,7 +47,7 @@ runs:
       shell: bash
       run: |
         DIRECTORY="$( mktemp -d )"
-        echo "::set-output name=path::${DIRECTORY}"
+        echo "path=${DIRECTORY}" >> $GITHUB_OUTPUT
 
     - name: Download artifact (for verification)
       uses: actions/download-artifact@v2
@@ -62,7 +62,7 @@ runs:
         COMMAND='${{ inputs.post_command }}'
         REPLACE='${{ steps.tmp-dir.outputs.path }}/${{ inputs.name }}'
         COMMAND="${COMMAND//\{\{download_path\}\}/${REPLACE}}"
-        echo "::set-output name=command::${COMMAND}"
+        echo "command=${COMMAND}" >> $GITHUB_OUTPUT
       if: ${{ inputs.post_command != '' }}
 
     - name: Execute post command
