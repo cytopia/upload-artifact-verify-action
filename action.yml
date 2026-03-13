@@ -36,7 +36,7 @@ runs:
       if: ${{ inputs.pre_command != '' }}
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.name }}
         path: ${{ inputs.path }}
